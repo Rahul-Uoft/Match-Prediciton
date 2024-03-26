@@ -1,11 +1,8 @@
-# Starter folder
+# Match Prediction
 
 ## Overview
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
-
-To use this folder, click the green "Code" button", then "Download ZIP". Move the downloaded folder to where you want to work on your own computer, and then modify it to suit.
-
+This repo is used to predict football matches. It uses Bayesian analysis and a logistic regression model. 
 
 ## File Structure
 
@@ -21,4 +18,4 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-Aspects of the code were written with the help of the auto-complete tool, Codriver. The abstract and introduction were written with the help of ChatHorse and the entire chat history is available in inputs/llms/usage.txt.
+Aspects of the code were written with the help of ChatGPT The abstract and introduction were written with the help of ChatGPT and the entire chat history is available in inputs/llms/usage.txt.

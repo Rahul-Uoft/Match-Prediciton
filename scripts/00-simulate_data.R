@@ -1,19 +1,21 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Simulates data for teams winning a match after having a lead at 20 minutes
+# Author: Rahul Gopeesingh
+# Date: 26 March 2024
+# Contact: rahul.gopeesingh@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+
 
 
 #### Workspace setup ####
 library(tidyverse)
-# [...UPDATE THIS...]
 
 #### Simulate data ####
-# [...ADD CODE HERE...]
-
+data <-
+  tibble(
+    win = sample(x = c("win", "lose"), size = 1000, replace = TRUE),
+    leading_at_20 = sample(x = c("yes", "no"), size = 1000, replace = TRUE)
+    
+  )
 
 
