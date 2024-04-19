@@ -34,7 +34,7 @@ saveRDS(
   file = "models/t1_model.rds"
 )
 ###GenG####
-geng_analysis_data <- read_parquet("data/analysis_data/t1_data_filtered_max_level.parquet")
+geng_analysis_data <- read_parquet("data/analysis_data/geng_data_filtered_max_level.parquet")
 
 ### Model data ####
 geng_model <-
