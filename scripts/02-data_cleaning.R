@@ -37,6 +37,8 @@ t1_data$`CS at 10` <- cut(t1_data$`CS at 10`,
                    include.lowest = TRUE)
 t1_data <- t1_data %>%
   mutate(Outcome = ifelse(Outcome == "Win", 1, ifelse(Outcome == "Lose", 0, Outcome)))
+t1_data$Outcome <- factor(t1_data$Outcome)
+t1_data$`Max Level Lead` <- factor(t1_data$`Max Level Lead`)
 write_parquet(t1_data, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/t1_data.parquet")
 t1_data
 
@@ -78,6 +80,8 @@ geng_data$`CS at 10` <- cut(geng_data$`CS at 10`,
                           include.lowest = TRUE)
 geng_data <- geng_data %>%
   mutate(Outcome = ifelse(Outcome == "Win", 1, ifelse(Outcome == "Lose", 0, Outcome)))
+geng_data$Outcome <- factor(geng_data$Outcome)
+geng_data$`Max Level Lead` <- factor(geng_data$`Max Level Lead`)
 write_parquet(geng_data, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/geng_data.parquet")
 geng_data
 
