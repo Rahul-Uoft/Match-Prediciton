@@ -1,16 +1,16 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Election Preferences in 2022 based on Gender and Education"
+
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Rahul Gopeesingh
+thanks: "Code and data are available at:https://github.com/Rahul-Uoft/election.git"
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "There are many factors that can influence someone's voting preference. Two of which that seem very relevant are a person's gender as well as their education level. This paper uses a logistic regression to investigate the relattionship between these factors and a person's political preference. We found that both females and highly educated people are significantly more likely to vote for Biden than for Trump"
 format: pdf
 number-sections: true
 bibliography: references.bib
+toc: TRUE
 ---
 
 ```{r}
@@ -18,79 +18,66 @@ bibliography: references.bib
 #| warning: false
 #| message: false
 
+
 library(tidyverse)
-library(palmerpenguins)
+
+library(boot)
+library(broom.mixed)
+library(collapse)
+library(dataverse)
+library(gutenbergr)
+library(janitor)
+library(knitr)
+library(marginaleffects)
+library(modelsummary)
+library(rstanarm)
+library(tidybayes)
+library(tidyverse)
+library(arrow)
 ```
 
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+In this paper we predict the outcome of a given game of league of legends played by players of the pro teams T1 and Generation Gaming(Gen G) based on their creep score(CS) at 10 minutes into the game and the highest level lead they have against their opponent. 
 
-The remainder of this paper is structured as follows. @sec-data....
+League of Legends is one of the most popular video games in 2024 and has held that stature for the last decade.[CITE TWITCH STATS] It is an extremely nuanced game but a brief overview shall be provided here but it will be explained with more depth in the @sec-dis.  The game consists of 2 teams of 5 players each, in which both teams compete to destroy the enemy 'nexus.' The map is split into 3 lanes and a 'jungle' which is a dark area in between each of the lanes. While the primary objective of the game is simple, that is, to destroy the enemy nexus, there are a variety of strategies that players can implore to do it. For instance, one team may spend the majority of its time maximizing its gold income in order to buy items that make them stronger and once this is done, it will be easier to kill the enemy players and destroy the enemy nexus. Another popular strategy would be to sacrifice your own gold income to deny the enemy gold income as well as experience. While the gold may be even, you will have more experience points and will be stronger with higher levels. This strength disparity once again can allow you to kill your opponents easier and yup, you guessed it, destroy the enemy nexus. 
+
+The two gaming organizations, T1 and Gen G, have been battling at the top level for the last few years. They are both Korean teams, with Korea being arguably the strongest region in the world. At the time of writing this paper, T1 are the current world champions, and have some of the highest caliber of players. They were the favourites to win the 2023 world championship and they are home to the most renowned and respected league of legends pro player of all time, Faker. However there is a caveat to their apparent dominance. Domestically, they struggle to beat Gen G. Many fans coin Gen G as 'T1's Kryptonite.' In the 2024 Korean Championship, Gen G beat T1 in a very close best of 5 that ended 3-2. Many fans also believe that T1 only won the world championship because Gen G got knocked out by a Chinese team. 
+
+This paper seeks to shed light on this historic rivalry by analyzing how good the players are at using their leads to close out games. The two types of leads that we will look at will be a high gold income as well as a straight out experience lead against their 'lane opponent'(more details are in the discussion)
+
+
+We use @citeR and @tidy in order to conduct this analysis
+
+The remainder of this paper is structured as follows. @sec-data discusses the data, how it was collected and the purpose in which we use this data. It also gives a brief analysis of the data. @sec-mod walks through the logistic regression model used and the justification for using this logistic regression. @sec-res shows the results and an intepretation of what they mean. Finally, @sec-dis discusses the potential reasons behind these results and their implications. 
 
 
 
 # Data {#sec-data}
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+## Data Source
 
-```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
+The data used in this paper is contained in the Cooperative Election Study 2022.@dataset This study examines American's views on representatives, electoral experiences and elections. This data is available for free at the Harvard University Dataverse.
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
-
-Talk way more about it. 
+Surverys were used to collect data from a sample large enough that it may be assumed is representative of the entire American population. Importantly, this covered a wide range of constituencies and the sample was large enough such that the data for each constituency is enough to assume that it is representative of its whole.@dataset There were 60 research teams, and each purchased 1000 surverys to hand out to their respective constituencies. Sample matching was used to pick the 1000 people in which the surverys were to be administered. This is a process which is not truly random but has the benefit of being practical. In a truly randomly selected group, the contact information for some may not be readily available and therefore makes the data collectin process much more difficult. Sample matching involves selecting a sample at random, and anyone who does not fit the criteria to proceed(in this case having your contact information available) is then replaced by a person in the pool who is believed to have similar characteristics. 
 
 
+# Model {#sec-mod}
 
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+We use the Bayesian Analysis model to conduct this by defining a linear relationship between our outcome variable and our predictor variables. These predictor variables are then assigned a distribution and we use these to predict the outcome variable. 
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+
+Define $y_i$ as the political preference of the individual and is 1 if the individual prefers Biden and 0 if the person prefers trump. Then $\mbox{gender}_i$ is the individual's gender and $\mbox{education}_i$ is the individual's education  
 
 \begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
+y_i|\pi_i &\sim \mbox{Bern}(\pi_i) \\
+\mbox{logit}(\pi_i) &= \alpha + \beta_1 \times \mbox{gender}_i + \beta_2 \times \mbox{education}_i\\
 \alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
+\beta_1 &\sim \mbox{Normal}(0, 2.5) \\
+\beta_2 &\sim \mbox{Normal}(0, 2.5) \\
 \end{align}
 
 We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
@@ -98,14 +85,17 @@ We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use
 
 ### Model justification
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+A logistic regression model was used in this analysis as the outcome variable is Binary. This is because we are considering whether they win the game or not. Whenever the outcome variable is Binary, a logistic regression model makes sense to help us understand it more. We used the default priors for our input variables. 
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
+A logistic regression model works by instead of considering an error value, which is done in linear regression, it considers a distribution for each of the inputs. The variability of these distributions inherently create the variability of the outcome which is associated to the error value we get in linear regression. The main advantage to this comes from the assumption made in linear regression models in which the error value is assumed to cancel out with each other(forming a normal distribution) In this case, consider the input of the cs at 10 minutes. In some games the players get more than their average and some games less, but they generally follow a normal distribution. The error is included by the variance of this normal. Assuming both of the inputs to follow a normal distribution makes sense because the number of games is high and this is the general trend of the data. (CITE FIGURE)
+
+Each game can only result in a win or a loss so there is no other outcome that needs to be considered. For the inputs, we grouped the data into several categories as it is generally accepted that 100 cs in 10 minutes is a great creep score, anything above 70 is acceptable and anything under 50 is awful. For the max level lead we stick to using values from (<-2), -1, 0, 1, (>2) as a 2 level means there is an extremely large disparity between the strength of the champions so much so that a 3rd level seems insignificant. (You can think of it like Lebron James playing against the average 10th grader vs playing against the average 7th grader.)
 
 
-# Results
 
-Our results are summarized in @tbl-modelresults.
+# Results {#sec-res}
+
+Our results are summarized in @tbl-modelresults. This table includes values for the intercept under various conditions as well as their error value.(the value in parentheses below each intercept.) Each value of the intercept indicates the estimated log-odds of the outocme variable. What this means is that the log of the outcome is given as the intercept. Therefore by taking the exponential function we can predict the likelihood of a certain outcome given a certain variable. For instance, we can see the intercept for Post-grads were -0.94. taking the exponential function of this gives a result of 0.39. This means that a random post-grad is 0.39 times as likely to vote for trump as they are for Biden. We are not concerned with the second half of the table. 
 
 ```{r}
 #| echo: false
@@ -116,7 +106,9 @@ Our results are summarized in @tbl-modelresults.
 library(rstanarm)
 
 first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+  readRDS(file = here::here("models/first_model2022.rds"))
+
+
 ```
 
 ```{r}
@@ -138,36 +130,47 @@ modelsummary::modelsummary(
 
 
 
-# Discussion
+\newpage
 
-## First discussion point {#sec-first-point}
+# Discussion {#sec-dis}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+## Female Prefereces
 
-## Second discussion point
+We observe that females are 0.8 times as likely to vote for Trump as they are for Biden. This follows a trend that has been observed since the beginning of the 21st century, women prefer the democratic party.@article1 This may be due to the history of the democratic party and its advocation for women-rights. It appears that the democratic party is the one that serves women best in terms of their economic interest. In fact the democratic party has paid a lot more attention to issues that directly pertain to women such as abortion and family leave than the republicans and there is evidence to suggest that this is a key part of its strategy. @article2
 
-## Third discussion point
+## Highly Educated People
+
+One of the most apparent outcomes of this model would be the likelihood of highly educated people to prefer voting for Biden over Trump. One cause of this can be the fact that college graduates are far more likely to self-identify as liberal.@article3 It could also pertain to the way in which most colleges are structured. It is possible that the values taught there are aligned with those of the democrats and hence shape the thinking of these highly educated people in a way that increases their likelihood of voting for a specific candidate. 
+
+The proportion of graduates that make up the democratic voting pool has greatly increased over the last 20 years.@article3
+
+
+## Political Strategy
+The most interesting part is how these observations apply to the political strategy of the two parties. Firstly, it was argued that the majority of females voting for the democrats were enough to sway the elections and therefore the main focus of the two parties, however this was disproven in 1980 and 1984 as the republican party won without fully closing the gender gap. They appealed to broad groups of women through issues that directly affected them and were not specific to women such as national security.@article2
+
+Additionally, with the increased amount of liberal, educated individuals arguing for various policies that inconvenience some working class individuals, it creates an opportunity for the republican party to increase its share of this demographic in an attempt to balance the disproportionality. An exaple of this may be the advocation for an environmentally friendly policy that negatively impacts the working class people in this field. (@article3)
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
+A major weakness of this analysis is that it assumes that Biden and Trump are choices made because of preferences. However, as explained in the model section, these are the only rational choices as any other choice seems to be irrelevant. Therefore someone may vote for a candidate not because they resonate with their political ideals, but rather because they are the 'lesser of two evils.' 
+
+One way in which this can be analyzed is by considering someones thoughts on different administrations throughout the years or using a benchmark to determine how much they genuinely believe in the political ideals of a certain party.
 
 \newpage
 
-\appendix
 
 # Appendix {-}
 
 
-# Additional data details
+\appendix
 
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
+In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows the outcome variable with simulated variable from the posterior distribution. 
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows how much the estimates change once the data is taken into account. 
 
 ```{r}
 #| eval: true
@@ -179,9 +182,18 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 #| fig-cap: "Examining how the model fits, and is affected by, the data"
 #| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
+analysis_data <- arrow::read_parquet(here::here("data/analysis_data/ces2022clean.parquet"))
+
+set.seed(853)
+
+analysis_data <- 
+  analysis_data |> 
+  slice_sample(n = 1000)
+
 pp_check(first_model) +
   theme_classic() +
   theme(legend.position = "bottom")
+
 
 posterior_vs_prior(first_model) +
   theme_minimal() +
@@ -192,9 +204,9 @@ posterior_vs_prior(first_model) +
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-stanareyouokay-1 is a trace plot. It shows lines that appear to bounce around and are horizontal. This suggests nothing wrong with the model we used.
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+@fig-stanareyouokay-2 is a Rhat plot. It shows every value close to 1 and nothing greater than 1.1 This suggests the model we used is fine. 
 
 ```{r}
 #| echo: false
@@ -209,6 +221,8 @@ posterior_vs_prior(first_model) +
 plot(first_model, "trace")
 
 plot(first_model, "rhat")
+
+
 ```
 
 
