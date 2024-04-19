@@ -1,9 +1,9 @@
 #### Preamble ####
-# Purpose: Simulates data for teams winning a match after having a lead at 20 minutes
+# Purpose: Downloads data for T1 players and Gen G players from Riots API
 # Author: Rahul Gopeesingh
-# Date: 26 March 2024
+# Date: 30 March 2024
 # Contact: rahul.gopeesingh@mail.utoronto.ca
-# License: MIT
+
 
 
 import os
