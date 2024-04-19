@@ -9,6 +9,8 @@
 
 library(tidyverse)
 library(arrow)
+library(dplyr)
+library(ggplot2)
 
 #### Clean data ####
 t1_data <-
@@ -16,44 +18,102 @@ t1_data <-
     "data/raw_data/t1rawdata.csv",
     col_types =
       cols(
-        "votereg" = col_integer(),
-        "presvote20post" = col_integer(),
-        "gender4" = col_integer(),
-        "educ" = col_integer()
+        "Player Name" = col_character(),
+        "CS at 10" = col_integer(),
+        "Max Level Lead" = col_integer(),
+        "Outcome" = col_character()
       )
   )
 
-ces2022
+t1_data
 
-ces2022 <-
-  ces2022 |>
-  filter(votereg == 1,
-         presvote20post %in% c(1, 2)) |>
-  mutate(
-    voted_for = if_else(presvote20post == 1, "Biden", "Trump"),
-    voted_for = as_factor(voted_for),
-    gender = if_else(gender4 == 1, "Male", "Female"),
-    education = case_when(
-      educ == 1 ~ "No HS",
-      educ == 2 ~ "High school graduate",
-      educ == 3 ~ "Some college",
-      educ == 4 ~ "2-year",
-      educ == 5 ~ "4-year",
-      educ == 6 ~ "Post-grad"
-    ),
-    education = factor(
-      education,
-      levels = c(
-        "No HS",
-        "High school graduate",
-        "Some college",
-        "2-year",
-        "4-year",
-        "Post-grad"
+t1_data$`CS at 10` <- cut(t1_data$`CS at 10`, 
+                   breaks = c(-Inf, 50, 70, 100, Inf), 
+                   labels = c("1", "2", "3", "4"),
+                   include.lowest = TRUE)
+t1_data <- t1_data %>%
+  mutate(Outcome = ifelse(Outcome == "Win", 1, ifelse(Outcome == "Lose", 0, Outcome)))
+write_parquet(t1_data, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/t1_data.parquet")
+t1_data
+
+# cs_plot_t1 <- ggplot(t1_data, aes(x = `CS at 10`, fill = Outcome)) +
+#   geom_bar(position = "dodge") +
+#   labs(title = "CS at 10 Outcome", x = "CS at 10", y = "Count", fill = "Outcome") +
+#   theme_minimal()
+# 
+# cs_plot_t1
+
+
+# level_lead_plot_t1 <- ggplot(t1_data, aes(x = `Max Level Lead`, fill = Outcome)) +
+#   geom_bar(position = "dodge") +
+#   labs(title = "Max Level Lead Outcome", x = "Max Level Lead", y = "Count", fill = "Outcome") +
+#   theme_minimal()
+# 
+# level_lead_plot_t1
+
+
+t1_data_filtered <- t1_data %>%
+  filter(`Player Name` != "Oner" & `Player Name` != "Keria")
+write_parquet(t1_data_filtered, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/t1_data_filtered.parquet")
+
+# cs_plot_t1_filtered <- ggplot(t1_data_filtered, aes(x = `CS at 10`, fill = Outcome)) +
+#   geom_bar(position = "dodge") +
+#   labs(title = "CS at 10 Outcome", x = "CS at 10", y = "Count", fill = "Outcome") +
+#   theme_minimal()
+# 
+# cs_plot_t1_filtered
+
+t1_data_filtered_max_level <- t1_data %>%
+  filter(`Player Name` != "Keria")
+
+write_parquet(t1_data_filtered_max_level, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/t1_data_filtered_max_level.parquet")
+
+
+
+# level_lead_plot <- ggplot(t1_data_filtered_max_level, aes(x = `Max Level Lead`, fill = Outcome)) +
+#   geom_bar(position = "dodge") +
+#   labs(title = "Max Level Lead Outcome", x = "Max Level Lead", y = "Count", fill = "Outcome") +
+#   theme_minimal()
+# level_lead_plot
+# 
+# 
+
+
+#import raw gengdata 
+geng_data <-
+  read_csv(
+    "data/raw_data/gengrawdata.csv",
+    col_types =
+      cols(
+        "Player Name" = col_character(),
+        "CS at 10" = col_integer(),
+        "Max Level Lead" = col_integer(),
+        "Outcome" = col_character()
       )
-    )
-  ) |>
-  select(voted_for, gender, education)
+  )
 
-#### Save data ####
-write_parquet(ces2022, "data/analysis_data/ces2022clean.parquet")
+geng_data
+#slice the geng data accordingly
+geng_data$`CS at 10` <- cut(geng_data$`CS at 10`, 
+                          breaks = c(-Inf, 50, 70, 100, Inf), 
+                          labels = c(1, 2, 3, 4),
+                          include.lowest = TRUE)
+geng_data <- geng_data %>%
+  mutate(Outcome = ifelse(Outcome == "Win", 1, ifelse(Outcome == "Lose", 0, Outcome)))
+write_parquet(geng_data, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/geng_data.parquet")
+geng_data
+
+
+
+###filter support and jungle from geng table
+geng_data_filtered <- geng_data %>%
+  filter(`Player Name` != "Canyon" & `Player Name` != "Lehends")
+write_parquet(geng_data_filtered, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/geng_data_filtered.parquet")
+
+
+###Filter out a table with no support only for geng
+geng_data_filtered_max_level <- geng_data %>%
+  filter(`Player Name` != "Lehends")
+
+write_parquet(geng_data_filtered_max_level, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/geng_data_filtered_max_level.parquet")
+
