@@ -1,25 +1,7 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
-
-#### Workspace setup ####
-library(tidyverse)
-library(rstanarm)
-
-#### Read data ####
-analysis_data <- read_csv("data/analysis_data/analysis_data.csv")
-
-### Model data ####
-#### Preamble ####
-# Purpose: Models the data in a logistic regression to be analyzed in paper
+# Purpose: Models the datasets in two logistic regressions to be analyzed in paper
 # Author: Rahul Gopeesingh
-# Date: 16 March 2024
+# Date: 30 March 2024
 # Contact: rahul.gopeesingh@mail.utoronto.ca
 
 
@@ -32,12 +14,12 @@ library(arrow)
 
 #### Read data ####
 set.seed(853)
-analysis_data <- read_parquet("data/analysis_data/ces2022clean.parquet")
-
+analysis_data <- read_parquet("data/analysis_data/t1_data_filtered_max_level.parquet")
+analysis_data$Outcome <- factor(analysis_data$Outcome)
 ### Model data ####
-first_model <-
+t1_model <-
   stan_glm(
-    formula = outcome ~ cs_at_10 + max_level_lead,
+    formula = Outcome ~ `CS at 10` + `Max Level Lead`,
     data = analysis_data,
     family = binomial(link = "logit"),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
@@ -49,14 +31,27 @@ first_model <-
 
 #### Save model ####
 saveRDS(
-  first_model,
-  file = "models/first_model2022.rds"
+  t1_model,
+  file = "models/t1_model.rds"
 )
+###GenG####
+geng_analysis_data <- read_parquet("data/analysis_data/t1_data_filtered_max_level.parquet")
+geng_analysis_data$Outcome <- factor(geng_analysis_data$Outcome)
+### Model data ####
+geng_model <-
+  stan_glm(
+    formula = Outcome ~ `CS at 10` + `Max Level Lead`,
+    data = analysis_data,
+    family = binomial(link = "logit"),
+    prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+    prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
+    prior_aux = exponential(rate = 1, autoscale = TRUE),
+    seed = 853
+  )
+
 
 #### Save model ####
 saveRDS(
-  first_model,
-  file = "models/first_model.rds"
+  geng_model,
+  file = "models/geng_model.rds"
 )
-
-
