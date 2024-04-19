@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Cleans the raw data into a digestable format
+# Purpose: Cleans the raw data into a digestable and saves many different tables to be analysed later format
 # Author: Rahul Gopeesingh
 # Date: 30 March 2024
 # Contact: rahul.gopeesingh@mail.utoronto.ca
@@ -13,6 +13,9 @@ library(dplyr)
 library(ggplot2)
 
 #### Clean data ####
+
+
+#import raw t1 data
 t1_data <-
   read_csv(
     "data/raw_data/t1rawdata.csv",
@@ -26,6 +29,7 @@ t1_data <-
   )
 
 t1_data
+#slice data accordingly
 
 t1_data$`CS at 10` <- cut(t1_data$`CS at 10`, 
                    breaks = c(-Inf, 50, 70, 100, Inf), 
@@ -36,32 +40,13 @@ t1_data <- t1_data %>%
 write_parquet(t1_data, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/t1_data.parquet")
 t1_data
 
-# cs_plot_t1 <- ggplot(t1_data, aes(x = `CS at 10`, fill = Outcome)) +
-#   geom_bar(position = "dodge") +
-#   labs(title = "CS at 10 Outcome", x = "CS at 10", y = "Count", fill = "Outcome") +
-#   theme_minimal()
-# 
-# cs_plot_t1
 
-
-# level_lead_plot_t1 <- ggplot(t1_data, aes(x = `Max Level Lead`, fill = Outcome)) +
-#   geom_bar(position = "dodge") +
-#   labs(title = "Max Level Lead Outcome", x = "Max Level Lead", y = "Count", fill = "Outcome") +
-#   theme_minimal()
-# 
-# level_lead_plot_t1
-
-
+#filter t1 jungler and support
 t1_data_filtered <- t1_data %>%
   filter(`Player Name` != "Oner" & `Player Name` != "Keria")
 write_parquet(t1_data_filtered, "/Users/rahulgopeesingh/Documents/Match Prediction/data/analysis_data/t1_data_filtered.parquet")
 
-# cs_plot_t1_filtered <- ggplot(t1_data_filtered, aes(x = `CS at 10`, fill = Outcome)) +
-#   geom_bar(position = "dodge") +
-#   labs(title = "CS at 10 Outcome", x = "CS at 10", y = "Count", fill = "Outcome") +
-#   theme_minimal()
-# 
-# cs_plot_t1_filtered
+#filter t1 jungler
 
 t1_data_filtered_max_level <- t1_data %>%
   filter(`Player Name` != "Keria")
@@ -70,13 +55,6 @@ write_parquet(t1_data_filtered_max_level, "/Users/rahulgopeesingh/Documents/Matc
 
 
 
-# level_lead_plot <- ggplot(t1_data_filtered_max_level, aes(x = `Max Level Lead`, fill = Outcome)) +
-#   geom_bar(position = "dodge") +
-#   labs(title = "Max Level Lead Outcome", x = "Max Level Lead", y = "Count", fill = "Outcome") +
-#   theme_minimal()
-# level_lead_plot
-# 
-# 
 
 
 #import raw gengdata 
