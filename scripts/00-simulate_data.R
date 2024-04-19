@@ -11,11 +11,12 @@
 library(tidyverse)
 
 #### Simulate data ####
-data <-
+simulated_data <-
   tibble(
-    win = sample(x = c("win", "lose"), size = 1000, replace = TRUE),
-    leading_at_20 = sample(x = c("yes", "no"), size = 1000, replace = TRUE)
+    win = sample(x = c("win", "lose"), size = 100, replace = TRUE),
+    cs_at_10 = sample(x = c(rnorm(80, 20)), size = 100, replace = TRUE),
+    max_level_lead = sample(x = c(1,2), size= 100, replace = TRUE)
     
   )
 
-
+simulated_data
