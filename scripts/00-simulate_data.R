@@ -11,6 +11,10 @@
 library(tidyverse)
 
 #### Simulate data ####
+
+#simulate the win based on a random choice, as well as a small level lead just to test it.
+#Then we simulate the cs level based on the fact that 100 cs is considered excellent 
+#and 60 cs is considered poor but usually cs lies in between that number.
 simulated_data <-
   tibble(
     win = sample(x = c("win", "lose"), size = 100, replace = TRUE),
