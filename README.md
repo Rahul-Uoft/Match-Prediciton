@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo is used to predict League of Legends matches. It uses Bayesian analysis and a logistic regression model. The model is based on the likelihood of a team winning a game based on having a gold lead at 20 minutes.
+This repo is used to predict League of Legends matches. It uses Bayesian analysis and a logistic regression model. The model is based on the likelihood of a team winning a game based on having a level lead or a certain number of minions killed at 10 minutes.
 
 ## File Structure
 
