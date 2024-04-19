@@ -1,12 +1,12 @@
 ---
-title: "Election Preferences in 2022 based on Gender and Education"
+title: "Predicting The Outcome T1 and Gen G Games Based on Leads"
 
 author: 
   - Rahul Gopeesingh
-thanks: "Code and data are available at:https://github.com/Rahul-Uoft/election.git"
+thanks: "Code and data are available at:https://github.com/Rahul-Uoft/Match-Prediciton.git"
 date: today
 date-format: long
-abstract: "There are many factors that can influence someone's voting preference. Two of which that seem very relevant are a person's gender as well as their education level. This paper uses a logistic regression to investigate the relattionship between these factors and a person's political preference. We found that both females and highly educated people are significantly more likely to vote for Biden than for Trump"
+abstract: "T1 and Gen G are two of the best League of Legends teams in the world with a longstanding rivalry. In a game of league of legends, the early focus of the game is not the primary objective, but rather, gain advantages so that it is easier to achieve the primary objective. Some teams are really good at throwing away the advantages they did so well to accrue. This paper investigates how good T1 and Gen G are at converting their leads into a win. The model predicts that Gen G is better at playing with leads, and are more likely to convert to a win, but are much worse playing without them. This information can be used by coaching staff to gain knowledge about the players as well as other teams to devise strategies to play against them."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -20,15 +20,6 @@ toc: TRUE
 
 
 library(tidyverse)
-
-library(boot)
-library(broom.mixed)
-library(collapse)
-library(dataverse)
-library(gutenbergr)
-library(janitor)
-library(knitr)
-library(marginaleffects)
 library(modelsummary)
 library(rstanarm)
 library(tidybayes)
@@ -46,12 +37,14 @@ League of Legends is one of the most popular video games in 2024 and has held th
 
 The two gaming organizations, T1 and Gen G, have been battling at the top level for the last few years. They are both Korean teams, with Korea being arguably the strongest region in the world. At the time of writing this paper, T1 are the current world champions, and have some of the highest caliber of players. They were the favourites to win the 2023 world championship and they are home to the most renowned and respected league of legends pro player of all time, Faker. However there is a caveat to their apparent dominance. Domestically, they struggle to beat Gen G. Many fans coin Gen G as 'T1's Kryptonite.' In the 2024 Korean Championship, Gen G beat T1 in a very close best of 5 that ended 3-2. Many fans also believe that T1 only won the world championship because Gen G got knocked out by a Chinese team. 
 
-This paper seeks to shed light on this historic rivalry by analyzing how good the players are at using their leads to close out games. The two types of leads that we will look at will be a high gold income as well as a straight out experience lead against their 'lane opponent'(more details are in the discussion)
+This paper investigates this historic rivalry by analyzing how good the players are at using their leads to close out games. The two types of leads that we will look at will be a high gold income as well as a straight out experience lead against their 'lane opponent'(more details are in the discussion) We are attempting to estimate how much more likely a team is to winning a game based on how much minions they killed in the first 10 minutes or the highest level lead they had against their opponent.
+
+It was found that Gen G players are 10 times as likely to win a game in which they are 2 levels up on their opponent whereas T1 players are only 4 times as likely to win such a game. This indicates that Gen G is much better at closing out a game with a lead than T1. Conversely, T1 players have a lot better chances of winning a game in which they do not have an advantage. Overall there aren't many differences between the teams in a general sense, but these two stood out as significant as they shed light on stylistic differences. These can be used by other teams to devise strategies when playing against either Gen G or T1 as well as by the T1 and Gen G staff to improve on their weaknesses.
 
 
 We use @citeR and @tidy in order to conduct this analysis
 
-The remainder of this paper is structured as follows. @sec-data discusses the data, how it was collected and the purpose in which we use this data. It also gives a brief analysis of the data. @sec-mod walks through the logistic regression model used and the justification for using this logistic regression. @sec-res shows the results and an intepretation of what they mean. Finally, @sec-dis discusses the potential reasons behind these results and their implications. 
+The remainder of this paper is structured as follows. @sec-data discusses the data, how it was collected and the purpose in which we use this data. It also gives a brief analysis of the data. @sec-mod walks through the logistic regression model used and the justification for using this logistic regression. @sec-res shows the results and an interpretation of what they mean. Finally, @sec-dis discusses the potential reasons behind these results and their implications. 
 
 
 
@@ -280,6 +273,8 @@ This paper analyzes the ability of T1 players and Gen G players to close out gam
 The model predicts Gen G to be way more likely to win a game with a 2 level lead against a lane opponent compared to T1. This is arguably the most significant type of level lead as a 1 level lead can come due to random fluctations. For instance, if both players need to kill 7 minions to level up once, if you kill the 7th minion 1 second before your opponent, you technically had a 1 level lead. A 2 level lead is really significant as it means you denied your opponent massive amounts of exp and are much stronger than them. While it is true that a 3 level lead is even more powerful, it is so much more uncommon, which can be observed in @fig-t1levelunfiltered. This argument extends further to 4 level and 5 level. This disparity means that T1 is probably less clinical in the way in which they finish out games. They are unable to convert a significant level lead into a win at the same rate as Gen G can. 
 
 The flipside of this is that the model predicts T1 to be much more likely to win a game in which they have a creep score of 50-70 at 10 minutes. This can be explained by various factors. Firstly, this level of cs is considered low for good players, which means these games probably had lots of early fighting in which you are required to outplay your opponent as you have no gold or exp advantage yet. Maybe they are more skilled and therefore better at these early fights or maybe they know the ins and outs of the champions and therefore they know which champions can win early fights against other champions. This can also be explained by Gen G having a player called "Chovy" who is known for his insanely high cs levels. If a game occurs where he is not farming at these levels, it may be unfamiliar territory and therefore difficult to play. While it is inconclusive as to whether these are due to stylistic differences or sheer skill, it is clear that the players of two of the world's best teams don't receive the same benefit from the same advantage.
+
+There are many ways in which the findings of this paper can be used. For instance, if another team notices that Gen G is a lot more likely to lose if they don't have high cs at 10 minutes then they can alter their playstyle in a way that maximizes their chances of keeping Gen G at a low cs level in the early game. This tactic won't work against T1 as they are completely fine not getting a lot of cs in the early game. Coaches of both of these teams can also use this by trying to sharpen their strengths or cover their weaknesses. For instance, T1 coaches can try to help the players get better at closing out games with level leads. 
 
 
 ## Weaknesses and Next Steps
